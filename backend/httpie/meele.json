@@ -1,0 +1,19 @@
+{
+    "weights": {
+        "tank": 0.2,
+        "healer": 0.0,
+        "spell_damage": 0.0,
+        "meele_damage": 0.6,
+        "ranged_damage": 0.0,
+        "debuff": 0.1,
+        "buff": 0.1
+    },
+    "a_skill": {
+        "archetype_id": 1,
+        "skill_id": 70
+    },
+    "b_skill":  {
+        "archetype_id": 8,
+        "skill_id": 26
+    }
+}

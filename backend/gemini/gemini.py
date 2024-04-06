@@ -1,4 +1,5 @@
 import time
+from prompts.prompts import get_prompt_synergy_extractor
 from google.protobuf.json_format import MessageToDict
 from vertexai.generative_models import (
     GenerativeModel,
@@ -89,25 +90,7 @@ def get_synergies(prompt: str):
         time.sleep(5)
 
         response_scores = model.generate_content(
-            f"""
-            # Role
-            You are an assistant who helps developers to extract information from text.
-
-            # Glossary
-            - synergy_id (integer): The Synergy identifier
-            - synergy_score (float): The Synergy score
-            - synergy_reason (string): The Synergy reason
-            - skill_a_id (integer): The Skill identifier (skill_a_id)
-            - skill_a_buff_id (integer): The Buff Skill identifier (skill_a_buff_id)
-            - skill_b_id (integer): The Skill identifier (skill_b_id)
-            - skill_b_buff_id (integer): The Buff Skill identifier (skill_b_buff_id)
-
-            # Guidelines
-            From the "Text" provided, extract the following information of each "Skill Synergy": "synergy_id", "synergy_score", "skill_a_id", "skill_a_buff_id", "skill_b_id", "skill_b_buff_id" and "synergy_score".
-
-            # Text
-            {response.candidates[0].content.parts[0].text}
-            """,
+            get_prompt_synergy_extractor(response.candidates[0].content.parts[0].text),
             generation_config={"temperature": 0.7},
             tools=[gemini_tool]
         )

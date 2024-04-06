@@ -1,3 +1,29 @@
+prompt_synergy_extractor = """
+# Role
+You are an assistant who helps developers to extract information from text.
+
+# Glossary
+- synergy_id (integer): The Synergy identifier
+- synergy_score (float): The Synergy score
+- synergy_reason (string): The Synergy reason
+- skill_a_id (integer): The Skill identifier (skill_a_id)
+- skill_a_buff_id (integer): The Buff Skill identifier (skill_a_buff_id)
+- skill_b_id (integer): The Skill identifier (skill_b_id)
+- skill_b_buff_id (integer): The Buff Skill identifier (skill_b_buff_id)
+
+# Guidelines
+From the "Text" provided, extract the following information of each "Skill Synergy": "synergy_id", "synergy_score", "skill_a_id", "skill_a_buff_id", "skill_b_id", "skill_b_buff_id" and "synergy_score".
+
+# Text
+{input}
+"""
+
+def get_prompt_synergy_extractor(text: str):
+    return prompt_synergy_extractor.format(
+        input=text
+    )
+
+
 prompt_evaluation = """
 # Role
 You are an assistant who helps players of MMORPG to build the skills combos of their character.
@@ -155,14 +181,18 @@ Given two skills (A and B), score the synergy (0.0 to 1.0) between the "skill_de
 - Skills Synergy:{evaluation_input}
 """
 
-def get_prompt_evaluation(archetype: dict, weights: dict, a_skill_id: int, b_skill_id: int):
+def get_prompt_evaluation(a_arch: dict, b_arch: dict, weights: dict, a_skill_id: int, b_skill_id: int):
     a_skill = {}
+    for a_spell in a_arch['spells']:
+        if a_spell['id'] != a_skill_id:
+            continue
+        a_skill = a_spell
+
     b_skill = {}
-    for spell in archetype['spells']:
-        if spell['id'] == a_skill_id:
-            a_skill = spell
-        if spell['id'] == b_skill_id:
-            b_skill = spell
+    for b_spell in b_arch['spells']:
+        if b_spell['id'] != b_skill_id:
+            continue
+        b_skill = b_spell
     
     synergy_id = 1
     evaluation_input = ""
@@ -176,6 +206,14 @@ def get_prompt_evaluation(archetype: dict, weights: dict, a_skill_id: int, b_ski
             if b_skill['mana'] == "":
                 b_mana = "0%"
 
+            a_range = a_skill['range']
+            if a_skill['range'] <= 0:
+                a_range = 0
+
+            b_range = b_skill['range']
+            if b_skill['range'] <= 0:
+                b_range = 0
+
             evaluation_input = f"""{evaluation_input}
     Synergy_{synergy_id}:
         - ID: {synergy_id}
@@ -184,7 +222,7 @@ def get_prompt_evaluation(archetype: dict, weights: dict, a_skill_id: int, b_ski
             - skill_name: {a_skill['name']}
             - skill_channeling: {a_skill['channeling']}
             - skill_mana_cost: {a_mana}
-            - skill_range: {a_skill['range']}
+            - skill_range: {a_range}
             - skill_cooldown: {a_skill['cooldown']} second(s)
             - skill_description: {a_skill['description']}
             - skill_buff_id: {ravencard_a['id']}
@@ -194,7 +232,7 @@ def get_prompt_evaluation(archetype: dict, weights: dict, a_skill_id: int, b_ski
             - skill_name: {b_skill['name']}
             - skill_channeling: {b_skill['channeling']}
             - skill_mana_cost: {b_mana}
-            - skill_range: {b_skill['range']}
+            - skill_range: {b_range}
             - skill_cooldown: {b_skill['cooldown']} second(s)
             - skill_description: {b_skill['description']}
             - skill_buff_id: {ravencard_b['id']}

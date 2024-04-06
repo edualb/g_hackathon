@@ -1,0 +1,105 @@
+import uvicorn, json, time
+from fastapi import FastAPI
+from pydantic import BaseModel
+from prompts.prompts import get_prompt_evaluation 
+from gemini.gemini import get_synergies
+
+archetype_data_file = {
+    1: "../data/warfare.json",
+    2: "../data/archery.json",
+    3: "../data/shadow.json",
+    4: "../data/protection.json",
+    5: "../data/wizardry.json",
+    6: "../data/holy.json",
+    7: "../data/spiritual.json",
+    8: "../data/witchcraft.json",
+}
+app = FastAPI()
+
+class Weights(BaseModel):
+    tank: float
+    healer: float
+    spell_damage: float
+    meele_damage: float
+    ranged_damage: float
+    debuff: float
+    buff: float
+
+class SkillMetadata(BaseModel):
+    archetype_id: int
+    skill_id: int
+
+class CombosInput(BaseModel):
+    weights: Weights
+    a_skill: SkillMetadata
+    b_skill: SkillMetadata
+
+@app.post("/combos")
+async def generate_combos(input: CombosInput):
+    a_data = {}
+    with open(archetype_data_file[input.a_skill.archetype_id], 'r') as file:
+        a_data = json.load(file)
+    
+    b_data = {}
+    with open(archetype_data_file[input.b_skill.archetype_id], 'r') as file:
+        b_data = json.load(file)
+    
+    weights = {
+        'tank': input.weights.tank,
+        'healer': input.weights.healer,
+        'spell_damage': input.weights.spell_damage,
+        'meele_damage': input.weights.meele_damage,
+        'ranged_damage': input.weights.ranged_damage,
+        'debuff': input.weights.debuff,
+        'buff': input.weights.buff,
+    }
+    prompt_evaluation = get_prompt_evaluation(a_data, b_data, weights, input.a_skill.skill_id, input.b_skill.skill_id)
+
+    synergies = get_synergies(prompt_evaluation)
+    if synergies["error"] == "Google AI API error" or synergies["error"] == "AI allucinates":
+        # give it a try (only one) in case the API returns an error or the AI allucinates
+        print(f"AI error: '{synergies['error']}'. Give it one more chance...")
+        time.sleep(10)
+        synergies = get_synergies(prompt_evaluation)
+
+    if synergies["error"] != None:
+        print(f"AI error: {synergies['error']}. ignoring the synergie of this skill.")
+        time.sleep(5)
+        return {
+            "error": "AI Alluciantion"
+        }
+    
+    response = []
+    sorted_synergies = sorted(synergies["value"], key=lambda x: x["score"], reverse=True)
+    for skill in sorted_synergies:
+        info = {
+            "score": skill["score"],
+            "reason": skill["reason"]
+        }
+        for a_data_spell in a_data['spells']:
+            if a_data_spell['id'] == skill['a_skill_id']:
+                info["a_skill_name"] = a_data_spell['name']
+                info["a_skill_description"] = a_data_spell['description']
+                for r in a_data_spell['ravencards']:
+                    if r['id'] != skill['a_ravencard_id']:
+                        continue
+                    info["a_ravencard_name"] = r['name']
+                    info["a_ravencard_description"] = r['description']
+
+        for b_data_spell in b_data['spells']:
+            if b_data_spell['id'] == skill['b_skill_id']:
+                info["b_skill_name"] = b_data_spell['name']
+                info["b_skill_description"] = b_data_spell['description']
+                for r in b_data_spell['ravencards']:
+                    if r['id'] != skill['b_ravencard_id']:
+                        continue
+                    info["b_ravencard_name"] = r['name']
+                    info["b_ravencard_description"] = r['description']
+        response.append(info)
+
+    return {
+        "synergies": response
+    }
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
