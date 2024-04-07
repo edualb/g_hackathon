@@ -19,6 +19,7 @@ type Spell struct {
 	Cooldown    float64     `json:"cooldown"`
 	Channeling  bool        `json:"channeling"`
 	Range       int         `json:"range"`
+	Image       string      `json:"image"`
 	Description string      `json:"description"`
 	Mana        string      `json:"mana"`
 	RavenCards  []Ravencard `json:"ravencards"`
@@ -29,5 +30,6 @@ type Ravencard struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Base        float64 `json:"base"`
+	Image       string  `json:"image"`
 	Increment   float64 `json:"increment"`
 }

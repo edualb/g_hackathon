@@ -30,6 +30,7 @@ type BuildBody struct {
 			Cooldown    float64 `json:"cooldown,omitempty"`
 			Channeling  bool    `json:"channeling,omitempty"`
 			Range       int     `json:"range,omitempty"`
+			Image       string  `json:"image,omitempty"`
 			Description struct {
 				Format string `json:"format,omitempty"`
 			} `json:"description,omitempty"`
@@ -39,8 +40,9 @@ type BuildBody struct {
 		} `json:"spells"`
 		Ravencards []struct {
 			ID          int      `json:"id,omitempty"`
-			Name        string   `json:"name"`
-			Spells      []string `json:"spells"`
+			Name        string   `json:"name,omitempty"`
+			Image       string   `json:"image,omitempty"`
+			Spells      []string `json:"spells,omitempty"`
 			Description struct {
 				Text  string `json:"text,omitempty"`
 				Scale []struct {
@@ -85,6 +87,7 @@ func RavendawnBuild(url string) ([]model.Archetype, error) {
 		rvc := model.Ravencard{
 			ID:          r.ID,
 			Name:        r.Name,
+			Image:       r.Image,
 			Description: desc,
 		}
 
@@ -131,6 +134,7 @@ func RavendawnBuild(url string) ([]model.Archetype, error) {
 					spell.Name = s.Name
 					spell.Channeling = s.Channeling
 					spell.Range = s.Range
+					spell.Image = s.Image
 					spell.Cooldown = s.Cooldown / 1000
 					spell.Description, _ = templates.SpellDescription(templates.SpellTranslation{
 						Description: strings.Replace(s.Description.Format, "\n\n", " ", -1),
