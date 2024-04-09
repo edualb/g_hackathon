@@ -30,6 +30,28 @@
               <input type="range" min="0" max="100" value="0" v-model="formData.weights.buff" class="range range-warning range-xs" />
             </div>
           </div>
+          <h3 class="text-xl">Skills</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="grid items-center justify-items-center grid-cols-8 gap-4 bg-gray-700 p-1 rounded-md" v-for="n in 2">
+              <a class="w-10 rounded" id="archtype" v-for="(archetypeSrc, index) in archetypes">
+                <img 
+                  @click="selectArchetype(n-1, index)"
+                  :title="archetypeSrc.name"
+                  :class="{ 'rounded': archetypeSrc.selection[n-1].active, 'border-2': archetypeSrc.selection[n-1].active}" 
+                  :src="getImageURL(archetypeSrc.name)" />
+              </a>
+            </div>
+            <div class="grid items-center justify-items-center grid-cols-4 gap-4 bg-gray-700 p-1 rounded-md" v-for="n in 2">
+              <h2 v-if="skills[n-1] == null">Empty</h2>
+              <a v-if="skills[n-1] != null" class="w-10 rounded" id="archtype" v-for="(skillSrc, index) in skills[n-1]">
+                <img 
+                  @click="selectSkill(n-1, index)"
+                  :title="skillDescription(skillSrc)"
+                  :class="{ 'rounded': skillSrc.active, 'border-2': skillSrc.active}"
+                  :src="skillSrc.image" />
+              </a>
+            </div>
+          </div>
           <button type="submit" class="btn btn-accent">Generate Combos</button>
         </form>
       </div>
@@ -48,6 +70,97 @@
 export default {
   data() {
     return {
+      skills: [null, null],
+      archetypes: [
+        {
+          name: "archery",
+          selection: [
+            {
+              active: false,
+            },
+            {
+              active: false,
+            },
+          ],
+        },
+        {
+          name: "protection",
+          selection: [
+            {
+              active: false,
+            },
+            {
+              active: false,
+            },
+          ],
+        },
+        {
+          name: "shadow",
+          selection: [
+            {
+              active: false,
+            },
+            {
+              active: false,
+            },
+          ],
+        },
+        {
+          name: "spiritual",
+          selection: [
+            {
+              active: false,
+            },
+            {
+              active: false,
+            },
+          ],
+        },
+        {
+          name: "warfare",
+          selection: [
+            {
+              active: false,
+            },
+            {
+              active: false,
+            },
+          ],
+        },
+        {
+          name: "holy",
+          selection: [
+            {
+              active: false,
+            },
+            {
+              active: false,
+            },
+          ],
+        },
+        {
+          name: "witchcraft",
+          selection: [
+            {
+              active: false,
+            },
+            {
+              active: false,
+            },
+          ],
+        },
+        {
+          name: "wizardry",
+          selection: [
+            {
+              active: false,
+            },
+            {
+              active: false,
+            },
+          ],
+        },
+    ],
       formData: {
         weights: {
           tank: 0,
@@ -57,14 +170,84 @@ export default {
           ranged_damage: 0,
           debuff: 0,
           buff: 0
+        },
+        a_skill: {
+          archetype_id: 0,
+          skill_id: 0,
+        },
+        b_skill: {
+          archetype_id: 0,
+          skill_id: 0,
         }
       }
     }
   },
   methods: {
+    selectSkill(selection_index, skill_index) {
+      for (let i = 0; i < this.skills[selection_index].length; i++) {
+        if (skill_index == i) {
+          if (selection_index == 0) {
+            this.formData.a_skill.skill_id = this.skills[selection_index][i].id
+          }
+          if (selection_index == 1) {
+            this.formData.b_skill.skill_id = this.skills[selection_index][i].id
+          }
+          this.skills[selection_index][i].active = true
+          continue
+        }
+        this.skills[selection_index][i].active = false
+      }
+    },
+    skillDescription(skill) {
+      return `${skill.name}
+      ${skill.description}`
+    },
+    selectArchetype(selection_index, archetype_index) {
+      for (let i = 0; i < this.archetypes.length; i++) {
+        if (archetype_index == i) {
+          this.archetypes[i].selection[selection_index].active = true
+          let dataURL = new URL(`../../../data/${this.archetypes[archetype_index].name}.json`, import.meta.url).href
+          fetch(dataURL).then(res => {
+            return res.json()
+          }).then(data => {
+            if (selection_index == 0) {
+              this.formData.a_skill.archetype_id = data.id
+            }
+            if (selection_index == 1) {
+              this.formData.b_skill.archetype_id = data.id
+            }
+            this.skills[selection_index] = data.spells
+          })
+          continue
+        }
+        this.archetypes[i].selection[selection_index].active = false
+      }
+    },
+    getImageURL(name) {
+      return new URL(`./assets/${name}.png`, import.meta.url).href
+    },
     submitCombos() {
-      // Handle form submission
-      alert(this.formData.weights.tank)
+      let request = {
+        weights: {
+          tank: this.formData.weights.tank,
+          healer: this.formData.weights.healer,
+          spell_damage: this.formData.weights.spell_damage,
+          meele_damage: this.formData.weights.meele_damage,
+          ranged_damage: this.formData.weights.ranged_damage,
+          debuff: this.formData.weights.debuff,
+          buff: this.formData.weights.buff,
+        },
+        a_skill: {
+          archetype_id: this.formData.a_skill.archetype_id,
+          skill_id: this.formData.a_skill.skill_id,
+        },
+        b_skill: {
+          archetype_id: this.formData.b_skill.archetype_id,
+          skill_id: this.formData.b_skill.skill_id,
+        }
+      }
+      // TODO: Make request
+      console.log(request)
     },
     formUpdated() {
       let w = this.formData.weights
@@ -183,4 +366,8 @@ export default {
 </script>
 
 <style scoped>
+
+#archtype:hover {
+  cursor: pointer;
+}
 </style>
