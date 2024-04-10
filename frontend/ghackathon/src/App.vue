@@ -46,7 +46,7 @@
               <a v-if="skills[n-1] != null" class="w-10 rounded" id="archtype" v-for="(skillSrc, index) in skills[n-1]">
                 <img 
                   @click="selectSkill(n-1, index)"
-                  :title="skillDescription(skillSrc)"
+                  :title="buildTitle(skillSrc.name, skillSrc.description)"
                   :class="{ 'rounded': skillSrc.active, 'border-2': skillSrc.active}"
                   :src="skillSrc.image" />
               </a>
@@ -58,9 +58,36 @@
 
       <!-- Output -->
       <div class="grid grid-cols-1 gap-4">
-        <h1 class="text-3xl font-bold">Hello world!</h1>
-        <h1 class="text-3xl font-bold">Hello world!</h1>
-        <h1 class="text-3xl font-bold">Hello world!</h1> 
+        <div 
+          v-if="loadingSynergies"
+          class="grid items-center justify-items-center grid-cols-1 p-1 gap-4">
+          <span class="loading loading-spinner loading-lg"></span>
+        </div>
+        <div 
+          v-if="synergies != null"
+          class="grid grid-cols-1 gap-4 bg-gray-700 p-1 rounded-md" v-for="s in synergies">
+            <h1 class="text-lg">Synergy: {{ s.score }}</h1>
+            <div class="grid items-center justify-items-center grid-cols-5 p-3 gap-4">
+              <img 
+                class="w-16"
+                :title="buildTitle(s.a.skill_name, s.a.skill_description)"
+                :src="s.a.skill_image" />
+              <img 
+                class="w-16"
+                :title="buildTitle(s.a.ravencard_name, s.a.ravencard_description)"
+                :src="s.a.ravencard_image" />
+              <h1 class="text-3xl font-bold">+</h1>
+              <img 
+                class="w-16"
+                :title="buildTitle(s.b.skill_name, s.b.skill_description)"
+                :src="s.b.skill_image" />
+              <img 
+                class="w-16"
+                :title="buildTitle(s.b.ravencard_name, s.b.ravencard_description)"
+                :src="s.b.ravencard_image" />
+            </div>
+            <p class="text-sm">{{ s.reason }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -70,6 +97,8 @@
 export default {
   data() {
     return {
+      loadingSynergies: false,
+      synergies: null,
       skills: [null, null],
       archetypes: [
         {
@@ -198,9 +227,9 @@ export default {
         this.skills[selection_index][i].active = false
       }
     },
-    skillDescription(skill) {
-      return `${skill.name}
-      ${skill.description}`
+    buildTitle(name, description) {
+      return `${name}
+      ${description}`
     },
     selectArchetype(selection_index, archetype_index) {
       for (let i = 0; i < this.archetypes.length; i++) {
@@ -227,6 +256,8 @@ export default {
       return new URL(`./assets/${name}.png`, import.meta.url).href
     },
     submitCombos() {
+      this.synergies = null
+      this.loadingSynergies = true
       let request = {
         weights: {
           tank: this.formData.weights.tank,
@@ -246,8 +277,72 @@ export default {
           skill_id: this.formData.b_skill.skill_id,
         }
       }
-      // TODO: Make request
-      console.log(request)
+
+      fetch("http://localhost:8000/combos", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request)
+      }).then(res => res.json()).then(data => {
+        this.synergies = []
+        this.loadingSynergies = false
+        for (const syn of data.synergies) {
+          let obj = {
+            score: syn.score,
+            reason: syn.reason.replaceAll('\\\"', "'"),
+            a: {
+              skill_name: "",
+              skill_description: "",
+              skill_image: "",
+              ravencard_name: "",
+              ravencard_description: "",
+              ravencard_image: ""
+            },
+            b: {
+              skill_name: "",
+              skill_description: "",
+              skill_image: "",
+              ravencard_name: "",
+              ravencard_description: "",
+              ravencard_image: ""
+            }
+          }
+          for (const s of this.skills[0]) {
+            if (syn.a_skill_id != s.id) {
+              continue
+            }
+            obj.a.skill_name = s.name
+            obj.a.skill_description = s.description
+            obj.a.skill_image = s.image
+            for (const r of s.ravencards) {
+              if (syn.a_ravencard_id != r.id) {
+                continue
+              }
+              obj.a.ravencard_name = r.name
+              obj.a.ravencard_description = r.description
+              obj.a.ravencard_image = r.image
+            }
+            break
+          }
+          for (const s of this.skills[1]) {
+            if (syn.b_skill_id != s.id) {
+              continue
+            }
+            obj.b.skill_name = s.name
+            obj.b.skill_description = s.description
+            obj.b.skill_image = s.image
+            for (const r of s.ravencards) {
+              if (syn.b_ravencard_id != r.id) {
+                continue
+              }
+              obj.b.ravencard_name = r.name
+              obj.b.ravencard_description = r.description
+              obj.b.ravencard_image = r.image
+            }
+            break
+          }
+          this.synergies.push(obj)
+        }
+      })
     },
     formUpdated() {
       let w = this.formData.weights

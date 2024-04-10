@@ -1,5 +1,6 @@
 import uvicorn, json, time
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from prompts.prompts import get_prompt_evaluation 
 from gemini.gemini import get_synergies
@@ -17,6 +18,14 @@ archetype_data_file = {
     8: f"{folder_prefix}/witchcraft.json",
 }
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Weights(BaseModel):
     tank: float
@@ -76,27 +85,12 @@ async def generate_combos(input: CombosInput):
     for skill in sorted_synergies:
         info = {
             "score": skill["score"],
-            "reason": skill["reason"]
+            "reason": skill["reason"],
+            "a_skill_id": skill['a_skill_id'],
+            "a_ravencard_id": skill['a_ravencard_id'],
+            "b_skill_id": skill['b_skill_id'],
+            "b_ravencard_id": skill['b_ravencard_id']
         }
-        for a_data_spell in a_data['spells']:
-            if a_data_spell['id'] == skill['a_skill_id']:
-                info["a_skill_name"] = a_data_spell['name']
-                info["a_skill_description"] = a_data_spell['description']
-                for r in a_data_spell['ravencards']:
-                    if r['id'] != skill['a_ravencard_id']:
-                        continue
-                    info["a_ravencard_name"] = r['name']
-                    info["a_ravencard_description"] = r['description']
-
-        for b_data_spell in b_data['spells']:
-            if b_data_spell['id'] == skill['b_skill_id']:
-                info["b_skill_name"] = b_data_spell['name']
-                info["b_skill_description"] = b_data_spell['description']
-                for r in b_data_spell['ravencards']:
-                    if r['id'] != skill['b_ravencard_id']:
-                        continue
-                    info["b_ravencard_name"] = r['name']
-                    info["b_ravencard_description"] = r['description']
         response.append(info)
 
     return {
