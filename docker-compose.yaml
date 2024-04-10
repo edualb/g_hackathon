@@ -1,0 +1,16 @@
+services:
+  backend:
+    container_name: be-ghackathon
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/etc/ghackathon/secrets/credentials.json
+    volumes:
+      - ./data:/etc/ghackathon/data:ro
+      - ./backend/secrets:/etc/ghackathon/secrets:ro
+    networks:
+     - ghackathon
+
+networks:
+  ghackathon: {}

@@ -4,15 +4,17 @@ from pydantic import BaseModel
 from prompts.prompts import get_prompt_evaluation 
 from gemini.gemini import get_synergies
 
+folder_prefix = '/etc/ghackathon/data'
+
 archetype_data_file = {
-    1: "../data/warfare.json",
-    2: "../data/archery.json",
-    3: "../data/shadow.json",
-    4: "../data/protection.json",
-    5: "../data/wizardry.json",
-    6: "../data/holy.json",
-    7: "../data/spiritual.json",
-    8: "../data/witchcraft.json",
+    1: f"{folder_prefix}/warfare.json",
+    2: f"{folder_prefix}/archery.json",
+    3: f"{folder_prefix}/shadow.json",
+    4: f"{folder_prefix}/protection.json",
+    5: f"{folder_prefix}/wizardry.json",
+    6: f"{folder_prefix}/holy.json",
+    7: f"{folder_prefix}/spiritual.json",
+    8: f"{folder_prefix}/witchcraft.json",
 }
 app = FastAPI()
 
@@ -101,5 +103,11 @@ async def generate_combos(input: CombosInput):
         "synergies": response
     }
 
+@app.get("/healthcheck")
+def healthcheck():
+    return {
+        "health": "OK"
+    }
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

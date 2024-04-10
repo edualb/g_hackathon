@@ -1,0 +1,52 @@
+{
+    "synergies": [
+        {
+            "a_ravencard_description": "Increases the slow duration by 3.0 seconds. ",
+            "a_ravencard_name": "chainwraith prowler",
+            "a_skill_description": "Throws chains in a cone-shaped area in front of you. Every target hit by it will be snared for 1 second, slowed by 30% for 3 seconds and pulled to your direction if there is enough room.",
+            "a_skill_name": "Spiked Chains",
+            "b_ravencard_description": "When below 60% health, Leech (Spell) now heals you for 30.0% more.",
+            "b_ravencard_name": "vampire necromancer",
+            "b_skill_description": "Throws a leech at the target, dealing 20.0% (Spell Power) spell damage per second for 8 seconds, healing you by the same amount.",
+            "b_skill_name": "Leech",
+            "reason": "The synergy between the skills is based on their \\\"Debuff\\\" ability. The skill \\\"Spiked Chains\\\" has a \\\"Debuff\\\" ability of \\\"Slow\\\", while the skill \\\"Leech\\\" has a \\\"Debuff\\\" ability of \\\"Healing\\\". The combination of these two abilities allows the player to slow down the enemy and then heal themselves. This synergy is useful for both PvE and PvP situations.",
+            "score": 0.89
+        },
+        {
+            "a_ravencard_description": "Increases the slow duration by 3.0 seconds. ",
+            "a_ravencard_name": "chainwraith prowler",
+            "a_skill_description": "Throws chains in a cone-shaped area in front of you. Every target hit by it will be snared for 1 second, slowed by 30% for 3 seconds and pulled to your direction if there is enough room.",
+            "a_skill_name": "Spiked Chains",
+            "b_ravencard_description": "Basic attacks you make on targets affected by your Leech (Spell) heal you for 13.0% health of the damage dealt.",
+            "b_ravencard_name": "rubycap mushroom",
+            "b_skill_description": "Throws a leech at the target, dealing 20.0% (Spell Power) spell damage per second for 8 seconds, healing you by the same amount.",
+            "b_skill_name": "Leech",
+            "reason": "The synergy between the skills is based on their \\\"Buff\\\" ability. The skill \\\"Spiked Chains\\\" has a \\\"Buff\\\" ability of \\\"Slow\\\", while the skill \\\"Leech\\\" has a \\\"Buff\\\" ability of \\\"Healing\\\". The combination of these two abilities allows the player to slow down the enemy and then heal themselves. This synergy is useful for both PvE and PvP situations.",
+            "score": 0.78
+        },
+        {
+            "a_ravencard_description": "Spiked Chains (Spell) reduces the (Weapon Defense) of creatures hit by 6.5% for 8 seconds. ",
+            "a_ravencard_name": "ghaz sandrider",
+            "a_skill_description": "Throws chains in a cone-shaped area in front of you. Every target hit by it will be snared for 1 second, slowed by 30% for 3 seconds and pulled to your direction if there is enough room.",
+            "a_skill_name": "Spiked Chains",
+            "b_ravencard_description": "When below 60% health, Leech (Spell) now heals you for 30.0% more.",
+            "b_ravencard_name": "vampire necromancer",
+            "b_skill_description": "Throws a leech at the target, dealing 20.0% (Spell Power) spell damage per second for 8 seconds, healing you by the same amount.",
+            "b_skill_name": "Leech",
+            "reason": "The synergy between the skills is based on their \\\"Debuff\\\" ability. The skill \\\"Spiked Chains\\\" has a \\\"Debuff\\\" ability of \\\"Weapon Defense Reduction\\\", while the skill \\\"Leech\\\" has a \\\"Debuff\\\" ability of \\\"Healing\\\". The combination of these two abilities allows the player to reduce the enemy's \\\"Weapon Defense\\\" and then heal themselves. This synergy is useful for both PvE and PvP situations.",
+            "score": 0.76
+        },
+        {
+            "a_ravencard_description": "Spiked Chains (Spell) reduces the (Weapon Defense) of creatures hit by 6.5% for 8 seconds. ",
+            "a_ravencard_name": "ghaz sandrider",
+            "a_skill_description": "Throws chains in a cone-shaped area in front of you. Every target hit by it will be snared for 1 second, slowed by 30% for 3 seconds and pulled to your direction if there is enough room.",
+            "a_skill_name": "Spiked Chains",
+            "b_ravencard_description": "Basic attacks you make on targets affected by your Leech (Spell) heal you for 13.0% health of the damage dealt.",
+            "b_ravencard_name": "rubycap mushroom",
+            "b_skill_description": "Throws a leech at the target, dealing 20.0% (Spell Power) spell damage per second for 8 seconds, healing you by the same amount.",
+            "b_skill_name": "Leech",
+            "reason": "The synergy between the skills is based on their \\\"Buff\\\" ability. The skill \\\"Spiked Chains\\\" has a \\\"Buff\\\" ability of \\\"Weapon Defense Reduction\\\", while the skill \\\"Leech\\\" has a \\\"Buff\\\" ability of \\\"Healing\\\". The combination of these two abilities allows the player to reduce the enemy's \\\"Weapon Defense\\\" and then heal themselves. This synergy is useful for both PvE and PvP situations.",
+            "score": 0.67
+        }
+    ]
+}
