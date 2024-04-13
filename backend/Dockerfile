@@ -5,5 +5,7 @@ COPY . .
 
 RUN pip install -r /app/requirements.txt
 
+EXPOSE 8000
+
 ENTRYPOINT ["python3"]
 CMD ["/app/main.py"]

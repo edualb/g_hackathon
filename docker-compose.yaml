@@ -11,6 +11,15 @@ services:
       - ./backend/secrets:/etc/ghackathon/secrets:ro
     networks:
      - ghackathon
+  frontend:
+    container_name: fe-ghackathon
+    build: ./frontend
+    ports:
+      - "3000:5173"
+    volumes:
+      - ./data:/app/src/assets/data:ro
+    networks:
+     - ghackathon
 
 networks:
   ghackathon: {}

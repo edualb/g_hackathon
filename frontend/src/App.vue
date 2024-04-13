@@ -235,8 +235,10 @@ export default {
       for (let i = 0; i < this.archetypes.length; i++) {
         if (archetype_index == i) {
           this.archetypes[i].selection[selection_index].active = true
-          let dataURL = new URL(`../../../data/${this.archetypes[archetype_index].name}.json`, import.meta.url).href
+          let dataURL = new URL(`./assets/data/${this.archetypes[archetype_index].name}.json`, import.meta.url).href
+          console.log(dataURL)
           fetch(dataURL).then(res => {
+            console.log(res)
             return res.json()
           }).then(data => {
             if (selection_index == 0) {
@@ -278,6 +280,11 @@ export default {
         }
       }
 
+      // Even if the application is running in containers, the browser will understand it is running inside of the
+      // browser. From that, we have implemented a workaround where we expose the backend API port (8000) and use
+      // localhost to make the request.
+      //
+      // Source: https://stackoverflow.com/questions/77060233/unknown-host-error-calling-containerized-backend-from-frontend 
       fetch("http://localhost:8000/combos", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
