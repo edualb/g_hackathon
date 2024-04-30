@@ -22,6 +22,8 @@ CombAI is a MMORPG AI Assistant focused on helping Ravendawn players to build th
 $ sudo docker compose up --build -d
 ```
 
+3. Access `localhost:3000` for the frontend application
+
 # (Optional) Update the data folder
 
 * Pre-requisites:
