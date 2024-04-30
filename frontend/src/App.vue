@@ -1,5 +1,11 @@
 <template>
   <div class="p-8">
+    <div class="grid items-center justify-items-center grid-cols-1 gap-4">
+      <div class="text-4xl">
+        <span class="text-green-400">C</span>omb<span class="text-violet-400">AI</span>
+      </div>
+      <h1 class="text-lg">The AI Assistant Combo Builder for MMORPG</h1>
+    </div>
     <div class="grid grid-cols-2 gap-4">
       <!-- Input -->
       <div class="grid grid-cols-1 gap-4">
